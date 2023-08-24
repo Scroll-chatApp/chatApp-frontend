@@ -39,10 +39,11 @@ const Chat = () => {
     //   console.log(error);
     // }
     console.log("receiver", currentChat);
-    // if (currentChat && newMessage) {
-    //   socket.emit("onMessage", { currentChat, newMessage });
-    //   setNewMessage("");
-    // }
+    console.log("sender", account._id);
+    if (currentChat && newMessage) {
+      socket.emit("onMessage", { currentChat, newMessage });
+      setNewMessage("");
+    }
   }
   useEffect(() => {
     async function getUsers(){
@@ -75,7 +76,9 @@ const Chat = () => {
     const getMessages=async()=>{
       try {
         console.log("currentChat", currentChat);
+        console.log("logedIn User", account._id)
         let response = await axios.get(`http://localhost:4000/message/all?sender=${account._id}&receiver=${currentChat}`);
+        console.log("messages Response", response)
         setCurrentMessages(response.data);
       } catch (error) {
         console.log("error", error);
