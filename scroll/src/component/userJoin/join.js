@@ -1,28 +1,43 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import scrollLogo from "../../image/scrollLogo.png";
+import "./join.css";
 
 let user;
 const Join = () => {
   const [userName, setUserName] = useState("");
+  const navigate = useNavigate();
   function handleChange(event) {
     setUserName(event.target.value);
   }
-
   const sendUser = () => {
     user = userName;
   };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    sendUser();
+    navigate("/chat");
+  };
+
   return (
-    <div>
-      <h1>hello from join</h1>
-      <input
-        placeholder="Enter"
-        id="username"
-        value={userName}
-        onChange={handleChange}
-      />
-      <Link to="/chat">
-        <button onClick={sendUser}>Let's chat</button>
-      </Link>
+    <div className="joinPage">
+      <form className="joinContainer" onSubmit={handleSubmit}>
+        <img className="logoScroll" src={scrollLogo} alt="logo" />
+        <h1>Time to Scroll</h1>
+        <input
+          className="inputScroll"
+          placeholder="Identify yourself"
+          id="username"
+          value={userName}
+          required
+          onChange={handleChange}
+        />
+        <div className="linkButton">
+          <button className="joinButton" onClick={sendUser}>
+            Let's chat
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
