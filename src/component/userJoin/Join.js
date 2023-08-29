@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import scrollLogo from "../../image/scrollLogo.png";
+// import axios from "axios";
 import "./join.css";
 
 let user;
