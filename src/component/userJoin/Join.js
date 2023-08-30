@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import scrollLogo from "../../image/scrollLogo.png";
-// import axios from "axios";
 import "./join.css";
 
 let user;
@@ -11,12 +10,9 @@ const Join = () => {
   function handleChange(event) {
     setUserName(event.target.value);
   }
-  const sendUser = () => {
-    user = userName;
-  };
   const handleSubmit = (event) => {
     event.preventDefault();
-    sendUser();
+    localStorage.setItem("user", userName);
     navigate("/chat");
   };
 
@@ -34,9 +30,7 @@ const Join = () => {
           onChange={handleChange}
         />
         <div className="linkButton">
-          <button className="joinButton" onClick={sendUser}>
-            Let's chat
-          </button>
+          <button className="joinButton">Let's chat</button>
         </div>
       </form>
     </div>
@@ -44,4 +38,3 @@ const Join = () => {
 };
 
 export default Join;
-export { user };
