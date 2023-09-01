@@ -1,33 +1,48 @@
 // ChatArea.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./ChatArea.css"; // Import the CSS file
-import axios from "axios";
+import {
+  conversationIdFetch,
+  createNewconversation,
+  fetchAllMessages,
+} from "../../../api";
+import { receiverMessage } from "../../../constant";
 
-const ENDPOINT = process.env.REACT_APP_ENDPOINT;
-const API = axios.create({ baseURL: ENDPOINT });
-
-const ChatArea = ({ receiverId, senderId, socket }) => {
+const ChatArea = ({ receiverId, senderId, socket, receiver }) => {
   const [messageToSend, setMessageToSend] = useState("");
   const [messages, setMessages] = useState([]);
   const [isSend, setIsSend] = useState();
   const [conversationId, setConversationId] = useState();
-  const [reload, setReload] = useState(0);
+  const [reload, setReload] = useState(true);
+  const messagesEndRef = useRef();
 
   useEffect(() => {
     async function fetchMessage() {
       try {
-        const conversation = await API.get(
-          `/getallconversationofuser/${senderId}/${receiverId}`
+        const fetchedConversation = await conversationIdFetch(
+          receiverId,
+          senderId
         );
-        const fetchedConversation = conversation.data;
         const conversationId = fetchedConversation._id;
         setConversationId(conversationId);
 
-        const response = await API.get(`/getmessage/${conversationId}`);
-        const fetchedMessage = response.data;
+        const fetchedMessage = await fetchAllMessages(conversationId);
         setMessages(fetchedMessage);
       } catch (error) {
-        console.error("Error fetching message:", error);
+        const createConversation = await createNewconversation(
+          receiverId,
+          senderId
+        );
+
+        if (createConversation) {
+          const fetchedConversation = await conversationIdFetch(
+            receiverId,
+            senderId
+          );
+          const conversationId = fetchedConversation._id;
+          setConversationId(conversationId);
+        }
+
         setMessages([]);
       }
     }
@@ -45,16 +60,28 @@ const ChatArea = ({ receiverId, senderId, socket }) => {
     }
 
     const type = "text";
-    socket.emit("sendMessage", {
+    const receiverSocketId = receiver.user_socket_id;
+
+    socket.emit(sendMessage, {
       messageToSend,
       type,
       senderId,
       conversationId,
+      receiverSocketId,
     });
-    setReload(reload + 1);
+    setReload(!reload);
     setMessageToSend("");
-    setIsSend(false);
   };
+
+  useEffect(() => {
+    socket.on(receiverMessage, () => {
+      setReload(!reload);
+    });
+  }, []);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
     <div className="chat-area">
@@ -81,6 +108,7 @@ const ChatArea = ({ receiverId, senderId, socket }) => {
                 </div>
 
                 <div
+                  ref={messagesEndRef}
                   className={`message  ${
                     msg.sender_id === senderId ? "sender" : "receiver"
                   }`}
