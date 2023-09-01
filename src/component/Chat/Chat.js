@@ -3,11 +3,11 @@ import socketIo from "socket.io-client";
 import TopBar from "./TopBar/TopBar";
 import ChatArea from "./ChatArea/ChatArea";
 import "./Chat.css"; // Import the CSS file
-import axios from "axios";
+import { fetchAllUser } from "../../api";
+import { userJoined } from "../../constant";
 
 let socket;
 const ENDPOINT = process.env.REACT_APP_ENDPOINT;
-const API = axios.create({ baseURL: ENDPOINT });
 
 const Chat = () => {
   const [users, setUsers] = useState([]);
@@ -18,11 +18,10 @@ const Chat = () => {
   useEffect(() => {
     socket = socketIo(ENDPOINT, { transports: ["websocket"] });
 
-    socket.emit("userJoined", { user: currentUser });
+    socket.emit(userJoined, { user: currentUser });
     async function fetchUsers() {
       try {
-        const response = await API.get(`/getallusers`);
-        const fetchedUsers = response.data;
+        const fetchedUsers = await fetchAllUser()
         const filteredUsers = fetchedUsers.filter((user) => {
           if (user.user_name === currentUser) {
             setSender(user);
@@ -38,9 +37,6 @@ const Chat = () => {
     }
 
     fetchUsers();
-    return () => {
-      socket.disconnect();
-    };
   }, [currentUser]);
 
   return (
@@ -48,9 +44,9 @@ const Chat = () => {
       <div className="sidebar">
         <h2>{currentUser} let's chat</h2>
         <ul>
-          {users.map((user, _id) => (
+          {users.map((user, user_name) => (
             <li
-              key={user._id}
+              key={user.user_name}
               onClick={() => setReceiver(user)} // Update the selected user
             >
               {user.user_name}
@@ -65,6 +61,7 @@ const Chat = () => {
             receiverId={receiver._id}
             senderId={sender._id}
             socket={socket}
+            receiver ={receiver}
           />
         )}
       </div>

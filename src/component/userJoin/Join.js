@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import scrollLogo from "../../image/scrollLogo.png";
 import "./join.css";
 
-let user;
 const Join = () => {
   const [userName, setUserName] = useState("");
   const navigate = useNavigate();
