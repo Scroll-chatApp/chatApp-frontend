@@ -1,17 +1,16 @@
 // ChatArea.js
 import React, { useEffect, useRef, useState } from "react";
-import "./ChatArea.css"; // Import the CSS file
+import "./chatArea.css"; // Import the CSS file
 import {
   conversationIdFetch,
   createNewconversation,
   fetchAllMessages,
 } from "../../../api";
-import { receiverMessage } from "../../../constant";
+import { messageSend, receiverMessage } from "../../../constant";
 
-const ChatArea = ({ receiverId, senderId, socket, receiver }) => {
+const ChatArea = ({ sender, socket, receiver }) => {
   const [messageToSend, setMessageToSend] = useState("");
   const [messages, setMessages] = useState([]);
-  const [isSend, setIsSend] = useState();
   const [conversationId, setConversationId] = useState();
   const [reload, setReload] = useState(true);
   const messagesEndRef = useRef();
@@ -20,8 +19,8 @@ const ChatArea = ({ receiverId, senderId, socket, receiver }) => {
     async function fetchMessage() {
       try {
         const fetchedConversation = await conversationIdFetch(
-          receiverId,
-          senderId
+          receiver._id,
+          sender._id
         );
         const conversationId = fetchedConversation._id;
         setConversationId(conversationId);
@@ -30,14 +29,14 @@ const ChatArea = ({ receiverId, senderId, socket, receiver }) => {
         setMessages(fetchedMessage);
       } catch (error) {
         const createConversation = await createNewconversation(
-          receiverId,
-          senderId
+          receiver._id,
+          sender._id
         );
 
         if (createConversation) {
           const fetchedConversation = await conversationIdFetch(
-            receiverId,
-            senderId
+            receiver._id,
+            sender._id
           );
           const conversationId = fetchedConversation._id;
           setConversationId(conversationId);
@@ -48,11 +47,7 @@ const ChatArea = ({ receiverId, senderId, socket, receiver }) => {
     }
 
     fetchMessage();
-  }, [senderId, receiverId, reload]);
-
-  useEffect(() => {
-    setIsSend(messageToSend.trim() !== "");
-  }, [messageToSend]);
+  }, [sender._id, receiver._id, reload]);
 
   const sendMessage = () => {
     if (messageToSend.trim() === "") {
@@ -60,14 +55,14 @@ const ChatArea = ({ receiverId, senderId, socket, receiver }) => {
     }
 
     const type = "text";
-    const receiverSocketId = receiver.user_socket_id;
-
-    socket.emit(sendMessage, {
+    const receiverName = receiver.user_name;
+    const senderId = sender._id;
+    socket.emit(messageSend, {
       messageToSend,
       type,
       senderId,
       conversationId,
-      receiverSocketId,
+      receiverName,
     });
     setReload(!reload);
     setMessageToSend("");
@@ -77,7 +72,7 @@ const ChatArea = ({ receiverId, senderId, socket, receiver }) => {
     socket.on(receiverMessage, () => {
       setReload(!reload);
     });
-  }, []);
+  });
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -110,7 +105,7 @@ const ChatArea = ({ receiverId, senderId, socket, receiver }) => {
                 <div
                   ref={messagesEndRef}
                   className={`message  ${
-                    msg.sender_id === senderId ? "sender" : "receiver"
+                    msg.sender_id === sender._id ? "sender" : "receiver"
                   }`}
                 >
                   <p className="message-text">{msg.message_data}</p>
@@ -132,9 +127,17 @@ const ChatArea = ({ receiverId, senderId, socket, receiver }) => {
         <input
           placeholder="Message"
           value={messageToSend}
-          onChange={(e) => setMessageToSend(e.target.value)}
+          onChange={(e) => {
+            setMessageToSend(e.target.value);       
+           }}
+           onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              sendMessage();
+            }
+          }}
         />
-        <button onClick={sendMessage} disabled={!isSend}>
+        
+        <button onClick={sendMessage} >
           Send
         </button>
       </div>
