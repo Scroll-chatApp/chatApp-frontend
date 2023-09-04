@@ -54,6 +54,12 @@
   font-size: 20px;
 }
 
+.message-img{
+  margin: 5px;
+  width: 50%;
+  height: 40%;
+}
+
 .time {
   font-size: 15px;
   color: #4d4c4c;
