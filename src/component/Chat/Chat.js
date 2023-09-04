@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import socketIo from "socket.io-client";
 import TopBar from "./TopBar/TopBar";
-import ChatArea from "./ChatArea/ChatArea";
-import "./Chat.css"; // Import the CSS file
+import ChatArea from "./ChatArea/chatArea";
+import "./chat.css"; // Import the CSS file
 import { fetchAllUser } from "../../api";
 import { userJoined } from "../../constant";
 
@@ -58,8 +58,7 @@ const Chat = () => {
         <TopBar receiver={receiver.user_name} />
         {receiver._id && (
           <ChatArea
-            receiverId={receiver._id}
-            senderId={sender._id}
+            sender={sender}
             socket={socket}
             receiver ={receiver}
           />

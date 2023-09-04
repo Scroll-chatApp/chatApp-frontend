@@ -58,3 +58,22 @@
 .sidebar li:hover {
   background-color: #e0e0e0;
 }
+
+/* Media query for smaller screens */
+@media screen and (max-width: 848px) {
+  .sidebar {
+    padding: 0px;
+    width: 15%;
+  }
+}
+
+/* Media query for smaller screens */
+@media screen and (max-width: 544px) {
+  .sidebar {
+    width: 20%;
+  }
+  .sidebar li {
+    padding: 5px;
+  }
+}
+
