@@ -1,8 +1,8 @@
 // TopBar.js
 import React from "react";
-import "./TopBar.css"; // Import the CSS file
+import "./topBar.css"; // Import the CSS file
 
-const TopBar = ({ receiver }) => {
+const topBar = ({ receiver }) => {
   return (
     <div className="topbar">
       <h1>{receiver}</h1>
@@ -10,4 +10,4 @@ const TopBar = ({ receiver }) => {
   );
 };
 
-export default TopBar;
+export default topBar;

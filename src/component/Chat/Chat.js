@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import socketIo from "socket.io-client";
-import TopBar from "./TopBar/TopBar";
-import ChatArea from "./ChatArea/chatArea";
-import "./chat.css"; // Import the CSS file
+import ChatArea from "./chatArea/chatArea";
+import TopBar from "./topBar/topBar";
 import { fetchAllUser } from "../../api";
-import { userJoined } from "../../constant";
+import { ENDPOINT, userJoined } from "../../constant";
+import "./chat.css"; // Import the CSS file
 
 let socket;
-const ENDPOINT = process.env.REACT_APP_ENDPOINT;
-
 const Chat = () => {
   const [users, setUsers] = useState([]);
   const [receiver, setReceiver] = useState({});
@@ -21,7 +19,7 @@ const Chat = () => {
     socket.emit(userJoined, { user: currentUser });
     async function fetchUsers() {
       try {
-        const fetchedUsers = await fetchAllUser()
+        const fetchedUsers = await fetchAllUser();
         const filteredUsers = fetchedUsers.filter((user) => {
           if (user.user_name === currentUser) {
             setSender(user);
@@ -57,11 +55,7 @@ const Chat = () => {
       <div className="chat-content">
         <TopBar receiver={receiver.user_name} />
         {receiver._id && (
-          <ChatArea
-            sender={sender}
-            socket={socket}
-            receiver ={receiver}
-          />
+          <ChatArea sender={sender} socket={socket} receiver={receiver} />
         )}
       </div>
     </div>
