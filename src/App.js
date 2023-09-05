@@ -1,6 +1,6 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Join from "./component/userJoin/join";
+import Join from "./component/userJoin/Join";
 import Chat from "./component/Chat/Chat";
 
 function App() {
