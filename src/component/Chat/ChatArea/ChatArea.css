@@ -1,7 +1,6 @@
-/* ChatArea.css */
 .chat-area {
   width: 100%;
-  height: 80vh;
+  height: 75vh;
   padding: 20px;
   background-color: #fff;
   box-shadow: 0px 2px 5px rgba(233, 22, 22, 0.1);
@@ -50,14 +49,14 @@
 }
 
 .message-text {
-  margin: 5px 0; /* Adjust spacing as needed */
+  margin: 5px 0;
   font-size: 20px;
 }
 
-.message-img{
+.message-img {
   margin: 5px;
   width: 50%;
-  height: 40%;
+  height: auto; /* Allow height to adjust proportionally */
 }
 
 .time {
@@ -75,11 +74,15 @@
 
 .input-area {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
   position: fixed;
   bottom: 2%;
   width: 70%;
+  padding: 10px; /* Add padding for spacing */
+  background-color: #fff; /* Match chat area background */
+  box-shadow: 0px 2px 5px rgba(233, 22, 22, 0.1);
 }
 
 .input-area input {
@@ -87,8 +90,15 @@
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  margin-right: 10px;
-  width: 50%;
+  margin-right: 10px; /* Add margin for spacing between input and upload button */
+}
+
+.upload-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 5px;
 }
 
 .input-area button {
@@ -100,6 +110,31 @@
   cursor: pointer;
 }
 
-.input-area button:hover {
+/* Your CSS */
+
+.file-upload-label {
+  display: inline-block;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+  padding: 5px 15px;
+}
+
+.file-upload-label input[type="file"] {
+  display: none;
+}
+
+.file-upload-icon {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 18px;
+}
+
+/* Style for when hovering over the label */
+.file-upload-label:hover {
   background-color: #0056b3;
 }

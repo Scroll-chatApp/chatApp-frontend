@@ -12,6 +12,7 @@ import {
   receiverMessage,
   senderMessage,
 } from "../../../constant";
+import PDFViewer from "./pdfView";
 
 const ChatArea = ({ sender, socket, receiver }) => {
   const [messageToSend, setMessageToSend] = useState("");
@@ -61,20 +62,11 @@ const ChatArea = ({ sender, socket, receiver }) => {
       return;
     }
 
-    const type = fileToSend ? fileType : "text";
+    const type = fileToSend !== "text" ? fileType : "text";
     const receiverName = receiver.user_name;
     const senderId = sender._id;
 
-    if (type === "file") {
-      socket.emit(fileSend, {
-        fileToSend,
-        type,
-        senderId,
-        conversationId,
-        receiverName,
-      });
-      setFileToSend(null);
-    } else {
+    if (type === "text") {
       socket.emit(messageSend, {
         messageToSend,
         type,
@@ -83,8 +75,17 @@ const ChatArea = ({ sender, socket, receiver }) => {
         receiverName,
       });
       setMessageToSend("");
+    } else {
+      socket.emit(fileSend, {
+        fileToSend,
+        type,
+        senderId,
+        conversationId,
+        receiverName,
+      });
+      setFileToSend(null);
     }
-
+    setFileType("text");
     setReload(!reload);
   };
 
@@ -92,7 +93,15 @@ const ChatArea = ({ sender, socket, receiver }) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setFileToSend(selectedFile);
-      setFileType("file");
+      setFileType("pdf");
+    }
+  };
+
+  const handleFileChangePic = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFileToSend(selectedFile);
+      setFileType("pic");
     }
   };
 
@@ -140,15 +149,22 @@ const ChatArea = ({ sender, socket, receiver }) => {
                     msg.sender_id === sender._id ? "sender" : "receiver"
                   }`}
                 >
-                  {/* <p className="message-text">{msg.message_data}</p> */}
-                  {msg.message_type === "file" ? (
-                    <img
-                      className="message-img"
-                      src={msg.message_data}
-                      alt={msg.sender_name + " Picture"}
-                    />
-                  ) : (
+                  {msg.message_type === "text" ? (
                     <p className="message-text">{msg.message_data}</p>
+                  ) : (
+                    <div>
+                      {msg.message_type === "pdf" ? (
+                        // If message_data is a PDF, show a link to download pdf
+                        <PDFViewer pdfUrl={msg.message_data} />
+                      ) : (
+                        // If message_data is not a PDF, show an image
+                        <img
+                          className="message-img"
+                          src={msg.message_data}
+                          alt={msg.sender_name + " Picture"}
+                        />
+                      )}
+                    </div>
                   )}
                   <p className="time">
                     {messageDate.toLocaleTimeString(undefined, {
@@ -165,24 +181,42 @@ const ChatArea = ({ sender, socket, receiver }) => {
       </div>
 
       <div className="input-area">
-        <input
-          placeholder="Message"
-          value={messageToSend}
-          onChange={(e) => {
-            setMessageToSend(e.target.value);
-          }}
-          onKeyPress={(e) => {
-            if (e.key === "Enter") {
-              sendMessage();
-            }
-          }}
-        />
-        <input
-          type="file"
-          accept=".jpg,.jpeg,.png,.gif"
-          onChange={handleFileChange} // Handle file input change
-        />
-        <button onClick={sendMessage}>Send</button>
+        <div className="text-input">
+          <input
+            placeholder="Message"
+            value={messageToSend}
+            onChange={(e) => {
+              setMessageToSend(e.target.value);
+            }}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                sendMessage();
+              }
+            }}
+          />
+
+          <button onClick={sendMessage}>Send</button>
+        </div>
+        <div className="upload-container">
+          <label className="file-upload-label">
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={handleFileChange}
+            />
+            <div className="file-upload-icon">Upload PDF</div>
+          </label>
+
+          <label className="file-upload-label">
+            <input
+              type="file"
+              accept=".jpg, .jpeg, .png, .gif"
+              onChange={handleFileChangePic}
+            />
+            <div className="file-upload-icon">Upload Image</div>
+          </label>
+          <span className="selected-file-type">{`Chat mode: ${fileType}`}</span>
+        </div>
       </div>
     </div>
   );
