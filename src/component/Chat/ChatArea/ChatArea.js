@@ -1,6 +1,6 @@
 // ChatArea.js
 import React, { useEffect, useRef, useState } from "react";
-import "./chatArea.css"; // Import the CSS file
+import "./ChatArea.css"; // Import the CSS file
 import {
   conversationIdFetch,
   createNewconversation,
