@@ -1,75 +1,34 @@
 import React, { useEffect, useState } from "react";
-// import { user } from "../userJoin/Join.js";
-import { user } from "../userJoin/join";
 import socketIo from "socket.io-client";
+import Sidebar from "./SideBar/SideBar";
+import { user } from "../userJoin/Join.js";
+import TopBar from "./TopBar/TopBar";
+import ChatArea from "./ChatArea/ChatArea";
+import "./Chat.css"; // Import the CSS file
 let socket;
 const ENDPOINT = "http://localhost:4500/";
 
 const Chat = () => {
-  const [messageToBeSend, setMessageToBeSend] = useState("");
-  const [messages, setMessages] = useState([]);
-  const [receiveBy, setReceiveBy] = useState([]);
-  const [receiverName, setReceiverName] = useState("");
-
-  // function handleChange(event) {
-  //   setMessageToBeSend(event.target.value);
-  // }
+  const [users, setUsers] = useState([]);
   useEffect(() => {
     socket = socketIo(ENDPOINT, { transports: ["websocket"] });
-    console.log("why here UP");
-
+    console.log("here");
     socket.emit("userJoined", { user });
 
-    socket.on("sendMessage", (messageData, sender) => {
-      console.log(messageData, " ==>> message got from backend  ");
-      console.log(sender, " say : ", messageData);
-      setReceiveBy((prereceiveBy) => [...prereceiveBy, sender]);
-      setMessages((prevMessages) => [...prevMessages, messageData]);
+    socket.on("addNewUser", (newUser) => {
+      console.log("new user", newUser);
+      setUsers((prevUsers) => [...prevUsers, newUser]);
     });
     return () => {
       socket.disconnect();
     };
   }, []);
-
-  const send = (event) => {
-    event.preventDefault();
-    const messageSend = messageToBeSend;
-    console.log(messageSend);
-    socket.emit("message", messageSend, receiverName, user);
-    setMessageToBeSend("");
-  };
-
   return (
-    <div>
-      <h1>{user} let's chat </h1> <br />
-      Enter receiver name
-      <input
-        placeholder="Recciver name"
-        value={receiverName}
-        id="message"
-        onChange={(e) => setReceiverName(e.target.value)}
-      />{" "}
-      <br />
-      Enter message
-      <input
-        placeholder="Message"
-        value={messageToBeSend}
-        id="message"
-        onChange={(e) => setMessageToBeSend(e.target.value)}
-      />
-      <br />
-      <button onClick={send}>Send</button>
-      <br />
-      <div>
-        Messages are:
-        {messages?.map((msg, index) => (
-          <div key={index}>
-            <p>
-              <strong>{receiveBy[index]}: </strong>
-              {msg}
-            </p>
-          </div>
-        ))}
+    <div className="chat-container">
+      <Sidebar users={users} />
+      <div className="chat-content">
+        <TopBar username={user} />
+        <ChatArea />
       </div>
     </div>
   );
