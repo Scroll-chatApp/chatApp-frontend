@@ -1,14 +1,12 @@
 // Sidebar.js
-import React from "react";
 import "./SideBar.css"; // Import the CSS file
-
-const SideBar = ({ users }) => {
+const SideBar = ({ Users }) => {
   return (
     <div className="sidebar">
       <h2>Users</h2>
       <ul>
-        {users.map((user, index) => (
-          <li key={index}>{user}</li>
+        {Users.map((user, index) => (
+          <li key={index}>{user.user_name}</li>
         ))}
       </ul>
     </div>
