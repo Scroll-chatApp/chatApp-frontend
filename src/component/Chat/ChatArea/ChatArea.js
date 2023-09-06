@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "./chatArea.css";
 import {
   conversationIdFetch,
-  createNewconversation,
+  createNewConversation,
   fetchAllMessages,
 } from "../../../api";
 import {
@@ -36,7 +36,7 @@ const ChatArea = ({ sender, socket, receiver }) => {
         const fetchedMessage = await fetchAllMessages(conversationId);
         setMessages(fetchedMessage);
       } catch (error) {
-        const createConversation = await createNewconversation(
+        const createConversation = await createNewConversation(
           receiver._id,
           sender._id
         );
@@ -63,8 +63,8 @@ const ChatArea = ({ sender, socket, receiver }) => {
     }
 
     const type = fileToSend !== "text" ? fileType : "text";
-    const receiverName = receiver.user_name;
-    const senderId = sender._id;
+    const {user_name : receiverName} = receiver;
+    const {_id : senderId} = sender;
 
     if (type === "text") {
       socket.emit(messageSend, {

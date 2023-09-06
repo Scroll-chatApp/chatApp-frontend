@@ -1,6 +1,6 @@
 import axios from "axios";
+import { ENDPOINT } from "../constant";
 
-const ENDPOINT = process.env.REACT_APP_ENDPOINT;
 const API = axios.create({ baseURL: ENDPOINT });
 
 export const conversationIdFetch = async (senderId,receiverId ) => {
@@ -17,7 +17,7 @@ export const fetchAllMessages = async  (conversationId) => {
   return fetchedMessage;
 };
 
-export const createNewconversation = async  (senderId,receiverId) => {
+export const createNewConversation = async  (senderId,receiverId) => {
     const createConversation = await API.post(
         `/newconversation/${senderId}/${receiverId}`
       );
