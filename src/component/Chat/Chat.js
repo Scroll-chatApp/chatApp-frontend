@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import socketIo from "socket.io-client";
 import TopBar from "./TopBar/TopBar";
 import ChatArea from "./ChatArea/ChatArea";
-import "./chat.css"; // Import the CSS file
+import "./Chat.css"; // Import the CSS file
 import { fetchAllUser } from "../../api";
 import { userJoined } from "../../constant";
 
