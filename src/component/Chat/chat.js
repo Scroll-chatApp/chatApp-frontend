@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import socketIo from "socket.io-client";
-import ChatArea from "./chatArea/chatArea";
-import TopBar from "./topBar/topBar";
+import ChatArea from "./ChatArea/chatArea";
+import TopBar from "./TopBar/topBar"
 import { fetchAllUser } from "../../api";
 import { ENDPOINT, userJoined } from "../../constant";
 import "./chat.css"; // Import the CSS file
