@@ -1,0 +1,54 @@
+.joinPage {
+  background-color: rgb(248, 231, 209);
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.joinContainer {
+  /* border: 2px solid rgb(65, 62, 66); */
+  width: 60%;
+  height: 60%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.joinContainer > img {
+  width: 10vmax;
+}
+.joinContainer > h1 {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 40px;
+}
+.joinContainer > input {
+  width: 20vmax;
+  height: 40px;
+  border: 0;
+  background-color: rgb(248, 231, 209);
+  border-bottom: 1px solid black;
+  font-family: "Times New Roman", Times, serif;
+  font-size: medium;
+}
+.linkButton {
+  padding: 4%;
+}
+.joinButton {
+  width: 20vmax;
+  height: 40px;
+  background-color: rgb(169, 239, 200);
+  border: 0;
+}
+.joinButton:hover {
+  background-color: rgb(92, 209, 145);
+}
+
+@media screen and (max-width: 480px) {
+  .joinContainer {
+    width: 80%;
+    height: 50%;
+  }
+  .joinContainer > input {
+    font-size: small;
+  }
+}
