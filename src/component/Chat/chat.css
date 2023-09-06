@@ -15,7 +15,7 @@
   background-color: #c9bfbf;
   padding: 20px;
   box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1);
-  height: 100vh;
+  height: 92vh;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #f2f2f2 #a99393;
@@ -64,6 +64,8 @@
   .sidebar {
     padding: 0px;
     width: 15%;
+    height: 100vh;
+
   }
 }
 
