@@ -107,6 +107,7 @@ const ChatArea = ({ sender, socket, receiver }) => {
 
   useEffect(() => {
     socket.on(receiverMessage, () => {
+      console.log("at receiver message");
       setReload(!reload);
     });
 
