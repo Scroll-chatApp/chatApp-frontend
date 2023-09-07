@@ -111,6 +111,7 @@ const ChatArea = ({ sender, socket, receiver }) => {
     });
 
     socket.on(senderMessage, () => {
+      console.log("at sender message");
       setReload(!reload);
     });
   }, [socket, reload]);
