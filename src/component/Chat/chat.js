@@ -17,6 +17,7 @@ const Chat = () => {
     socket = socketIo(ENDPOINT, { transports: ["websocket"] });
 
     socket.emit(userJoined, { user: currentUser });
+    console.log("User : ", currentUser);
     async function fetchUsers() {
       try {
         const fetchedUsers = await fetchAllUser();
