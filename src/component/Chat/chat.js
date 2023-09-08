@@ -17,7 +17,7 @@ const Chat = () => {
   console.log("User outside useeffect : ", currentUser);
   useEffect(() => {
     console.log("User before : ", currentUser);
-    socket = socketIo(ENDPOINT, { transports: ["websocket"] });
+    socket = socketIo(ENDPOINT, {path: './socket'}, { transports: ["websocket"] });
 
     socket.emit(userJoined, { user: currentUser });
     console.log("User : ", currentUser);
