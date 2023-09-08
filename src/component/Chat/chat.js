@@ -13,6 +13,8 @@ const Chat = () => {
   const [sender, setSender] = useState({});
 
   const currentUser = localStorage.getItem("user");
+  
+  console.log("User outside useeffect : ", currentUser);
   useEffect(() => {
     console.log("User before : ", currentUser);
     socket = socketIo(ENDPOINT, { transports: ["websocket"] });
