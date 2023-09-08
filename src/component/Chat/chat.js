@@ -14,6 +14,7 @@ const Chat = () => {
 
   const currentUser = localStorage.getItem("user");
   useEffect(() => {
+    console.log("User before : ", currentUser);
     socket = socketIo(ENDPOINT, { transports: ["websocket"] });
 
     socket.emit(userJoined, { user: currentUser });
