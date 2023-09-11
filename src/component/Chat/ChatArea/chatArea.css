@@ -17,23 +17,50 @@
 .message {
   border-radius: 5px;
   padding: 10px;
+  margin: 10px;
   font-size: 20px;
+  max-width: 70%;
+  max-height: 40vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #f2f2f2 #ede5e5;
 }
+/* Track */
+.message::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Handle */
+.message::-webkit-scrollbar-thumb {
+  background-color: #ddd8d8;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+.message::-webkit-scrollbar-thumb:hover {
+  background-color: #ddd8d8;
+}
+
 
 .sender {
-  background-color: rgb(155, 187, 238);
   color: rgb(0, 0, 0);
   text-align: right;
-  margin-left: 50%;
+  width: fit-content;
+  float: right;
 }
+ .message-sender-color{
+  background-color: rgb(155, 187, 238);
+ }
 
 .receiver {
-  background-color: rgb(179, 237, 179);
   color: rgb(1, 1, 1);
   align-self: flex-start;
   text-align: left;
-  margin-right: 50%;
+  width: fit-content;
 }
+.message-receiver-color{
+  background-color: rgb(179, 237, 179);
+ }
 
 .date-container {
   display: flex;
@@ -55,8 +82,10 @@
 
 .message-img {
   margin: 5px;
-  width: 50%;
-  height: auto; /* Allow height to adjust proportionally */
+  width: fit-content;
+  max-width: 50%;
+  height: auto; 
+  max-height: 50vh;
 }
 
 .time {
