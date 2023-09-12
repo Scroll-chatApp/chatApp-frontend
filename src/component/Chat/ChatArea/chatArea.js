@@ -37,9 +37,7 @@ const ChatArea = ({ sender, socket, receiver }) => {
             setConversationId(conversationId);
             setMessages([]);
           } else {
-            const conversationId = fetchedConversation._id;
-            setConversationId(conversationId);
-  
+            setConversationId(fetchedConversation._id); 
             const fetchedMessage = await fetchAllMessages(conversationId);
             setMessages(fetchedMessage);
           }

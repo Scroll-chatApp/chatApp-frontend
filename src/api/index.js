@@ -8,8 +8,7 @@ export const conversationIdFetch = async (senderId, receiverId) => {
     const conversation = await API.get(
       `/getallconversationofuser/${senderId}/${receiverId}`
     );
-    const fetchedConversation = conversation.data;
-    return fetchedConversation;
+    return conversation.data;
   } catch (error) {
     console.error("Error fetching conversation:", error);
   }
@@ -30,6 +29,5 @@ export const createNewConversation = async  (senderId, receiverId) => {
 
 export const fetchAllUser = async  () => {
   const response = await API.get(`/getallusers`);
-  const fetchedUsers = response.data;
-  return fetchedUsers;
+  return response.data;
 };
