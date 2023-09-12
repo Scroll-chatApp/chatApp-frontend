@@ -1,0 +1,27 @@
+/* DownloadPDF.css */
+
+.download-pdf-container {
+
+    margin: 20px;
+  }
+  
+  .download-pdf-text {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .download-pdf-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #bdaaaa; /* Choose your desired background color */
+    color: #575454; /* Text color */
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .download-pdf-link:hover {
+    background-color: #a3a8ad; /* Hover color */
+  }
+  
