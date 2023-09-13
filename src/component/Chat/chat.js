@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import socketIo from "socket.io-client";
 import ChatArea from "./ChatArea/chatArea";
-import TopBar from "./TopBar/topBar"
+import TopBar from "./TopBar/topBar";
 import { fetchAllUser } from "../../api";
-import { ENDPOINT, userJoined } from "../../constant";
+import { ENDPOINT, userJoined, userUpdated } from "../../constant";
 import "./chat.css"; // Import the CSS file
 
 let socket;
@@ -13,21 +13,21 @@ const Chat = () => {
   const [sender, setSender] = useState({});
 
   const currentUser = localStorage.getItem("user");
+
   useEffect(() => {
     socket = socketIo(ENDPOINT, { transports: ["websocket"] });
 
     socket.emit(userJoined, { user: currentUser });
+    socket.on(userUpdated, ({ user: updatedUserData }) => {
+      setSender(updatedUserData);
+    });
+
     async function fetchUsers() {
       try {
         const fetchedUsers = await fetchAllUser();
-        const filteredUsers = fetchedUsers.filter((user) => {
-          if (user.user_name === currentUser) {
-            setSender(user);
-            return false;
-          } else {
-            return true;
-          }
-        });
+        const filteredUsers = fetchedUsers.filter(
+          (user) => user.user_name !== currentUser
+        );
         setUsers(filteredUsers);
       } catch (error) {
         console.error("Error fetching users:", error);

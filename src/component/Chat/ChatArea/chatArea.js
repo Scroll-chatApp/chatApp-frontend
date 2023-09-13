@@ -1,4 +1,3 @@
-// ChatArea.js
 import React, { useEffect, useRef, useState } from "react";
 import "./chatArea.css"; // Import the CSS file
 import {
@@ -16,59 +15,57 @@ import PDFViewer from "./pdfView";
 
 const ChatArea = ({ sender, socket, receiver }) => {
   const [messageToSend, setMessageToSend] = useState("");
-  const [fileToSend, setFileToSend] = useState(null); // New state for selected file
-  const [fileType, setFileType] = useState("text"); // New state for file type
   const [messages, setMessages] = useState([]);
   const [conversationId, setConversationId] = useState();
-  const [reload, setReload] = useState(true);
   const messagesEndRef = useRef();
 
   useEffect(() => {
-    async function fetchMessage() {
-      try {
-        const fetchedConversation = await conversationIdFetch(
-          receiver._id,
-          sender._id
-        );
-        const conversationId = fetchedConversation._id;
-        setConversationId(conversationId);
-
-        const fetchedMessage = await fetchAllMessages(conversationId);
-        setMessages(fetchedMessage);
-      } catch (error) {
-        const createConversation = await createNewConversation(
-          receiver._id,
-          sender._id
-        );
-
-        if (createConversation) {
+    if(messages){
+      async function fetchMessage() {
+        try {
           const fetchedConversation = await conversationIdFetch(
             receiver._id,
             sender._id
           );
-          const conversationId = fetchedConversation._id;
-          setConversationId(conversationId);
+  
+          if (!fetchedConversation) {
+            const createConversation = await createNewConversation(
+              receiver._id,
+              sender._id
+            );
+            const conversationId = createConversation;
+            setConversationId(conversationId);
+            setMessages([]);
+          } else {
+            setConversationId(fetchedConversation._id); 
+            const fetchedMessage = await fetchAllMessages(conversationId);
+            setMessages(fetchedMessage);
+          }
+        } catch (error) {
+          console.error("Error fetching messages:", error);
+          // Handle any other errors as needed
+          setMessages([]);
         }
-
-        setMessages([]);
-      }
+    }
+    
+    fetchMessage();
     }
 
-    fetchMessage();
-  }, [sender._id, receiver._id, reload]);
+  });
 
-  const sendMessage = () => {
-    if (messageToSend.trim() === "" && !fileToSend) {
+  const sendMessage = (messageToBeSend, type) => {
+    if (type === "text" && !messageToBeSend.trim()) {
+      return;
+    }  
+    if (!messageToBeSend) {
       return;
     }
 
-    const type = fileToSend !== "text" ? fileType : "text";
-    const {user_name : receiverName} = receiver;
-    const {_id : senderId} = sender;
-
+    const { user_name: receiverName } = receiver;
+    const { _id: senderId } = sender;
     if (type === "text") {
       socket.emit(messageSend, {
-        messageToSend,
+        messageToBeSend,
         type,
         senderId,
         conversationId,
@@ -77,43 +74,52 @@ const ChatArea = ({ sender, socket, receiver }) => {
       setMessageToSend("");
     } else {
       socket.emit(fileSend, {
-        fileToSend,
+        messageToBeSend,
         type,
         senderId,
         conversationId,
         receiverName,
       });
-      setFileToSend(null);
     }
-    setFileType("text");
-    setReload(!reload);
   };
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      setFileToSend(selectedFile);
-      setFileType("pdf");
+      sendMessage(selectedFile, "pdf");
     }
   };
 
   const handleFileChangePic = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      setFileToSend(selectedFile);
-      setFileType("pic");
+      sendMessage(selectedFile, "pic");
     }
   };
 
   useEffect(() => {
-    socket.on(receiverMessage, () => {
-      setReload(!reload);
+    socket.on(receiverMessage, (incomingMessage) => {
+      const newMessage = {
+        message_data: incomingMessage.message_data,
+        message_type: incomingMessage.message_type,
+        sender_id: incomingMessage.sender_id,
+        createdAt: incomingMessage.createdAt,
+        _id:incomingMessage._id,
+      };
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
 
-    socket.on(senderMessage, () => {
-      setReload(!reload);
+    socket.on(senderMessage, (incomingMessage) => { 
+      const newMessage = {
+      message_data: incomingMessage.message_data,
+      message_type: incomingMessage.message_type,
+      sender_id: incomingMessage.sender_id,
+      createdAt: incomingMessage.createdAt,
+      _id:incomingMessage._id,
+    };
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
-  }, [socket, reload]);
+  }, [socket]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -145,8 +151,14 @@ const ChatArea = ({ sender, socket, receiver }) => {
 
                 <div
                   ref={messagesEndRef}
-                  className={`message  ${
-                    msg.sender_id === sender._id ? "sender" : "receiver"
+                  className={`message ${
+                    msg.message_type === "pic"
+                      ? msg.sender_id === sender._id
+                        ? "sender"
+                        : "receiver"
+                      : msg.sender_id === sender._id
+                      ? "sender message-sender-color"
+                      : "receiver message-receiver-color"
                   }`}
                 >
                   {msg.message_type === "text" ? (
@@ -190,20 +202,18 @@ const ChatArea = ({ sender, socket, receiver }) => {
             }}
             onKeyPress={(e) => {
               if (e.key === "Enter") {
-                sendMessage();
+                sendMessage(messageToSend, "text");
               }
             }}
           />
 
-          <button onClick={sendMessage}>Send</button>
+          <button onClick={() => sendMessage(messageToSend, "text")}>
+            Send
+          </button>
         </div>
         <div className="upload-container">
           <label className="file-upload-label">
-            <input
-              type="file"
-              accept=".pdf"
-              onChange={handleFileChange}
-            />
+            <input type="file" accept=".pdf" onChange={handleFileChange} />
             <div className="file-upload-icon">Upload PDF</div>
           </label>
 
@@ -215,7 +225,6 @@ const ChatArea = ({ sender, socket, receiver }) => {
             />
             <div className="file-upload-icon">Upload Image</div>
           </label>
-          <span className="selected-file-type">{`Chat mode: ${fileType}`}</span>
         </div>
       </div>
     </div>
