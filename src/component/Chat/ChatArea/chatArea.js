@@ -20,43 +20,39 @@ const ChatArea = ({ sender, socket, receiver }) => {
   const messagesEndRef = useRef();
 
   useEffect(() => {
-    if(messages){
-      async function fetchMessage() {
-        try {
-          const fetchedConversation = await conversationIdFetch(
+    async function fetchMessage() {
+      try {
+        const fetchedConversation = await conversationIdFetch(
+          receiver._id,
+          sender._id
+        );
+
+        if (!fetchedConversation) {
+          const createConversation = await createNewConversation(
             receiver._id,
             sender._id
           );
-  
-          if (!fetchedConversation) {
-            const createConversation = await createNewConversation(
-              receiver._id,
-              sender._id
-            );
-            const conversationId = createConversation;
-            setConversationId(conversationId);
-            setMessages([]);
-          } else {
-            setConversationId(fetchedConversation._id); 
-            const fetchedMessage = await fetchAllMessages(conversationId);
-            setMessages(fetchedMessage);
-          }
-        } catch (error) {
-          console.error("Error fetching messages:", error);
-          // Handle any other errors as needed
+          const conversationId = createConversation;
+          setConversationId(conversationId);
           setMessages([]);
+        } else {
+          setConversationId(fetchedConversation._id);
+          const fetchedMessage = await fetchAllMessages(conversationId);
+          setMessages(fetchedMessage);
         }
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+        // Handle any other errors as needed
+        setMessages([]);
+      }
     }
-    
     fetchMessage();
-    }
-
-  });
+  }, [receiver._id, conversationId, sender._id]);
 
   const sendMessage = (messageToBeSend, type) => {
     if (type === "text" && !messageToBeSend.trim()) {
       return;
-    }  
+    }
     if (!messageToBeSend) {
       return;
     }
@@ -104,20 +100,20 @@ const ChatArea = ({ sender, socket, receiver }) => {
         message_type: incomingMessage.message_type,
         sender_id: incomingMessage.sender_id,
         createdAt: incomingMessage.createdAt,
-        _id:incomingMessage._id,
+        _id: incomingMessage._id,
       };
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
 
-    socket.on(senderMessage, (incomingMessage) => { 
+    socket.on(senderMessage, (incomingMessage) => {
       const newMessage = {
-      message_data: incomingMessage.message_data,
-      message_type: incomingMessage.message_type,
-      sender_id: incomingMessage.sender_id,
-      createdAt: incomingMessage.createdAt,
-      _id:incomingMessage._id,
-    };
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
+        message_data: incomingMessage.message_data,
+        message_type: incomingMessage.message_type,
+        sender_id: incomingMessage.sender_id,
+        createdAt: incomingMessage.createdAt,
+        _id: incomingMessage._id,
+      };
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
   }, [socket]);
 
